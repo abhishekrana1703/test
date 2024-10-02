@@ -1,12 +1,68 @@
-# test
+import os
+import subprocess
+import sys
 
+# Set GitLab and GitHub tokens
+GITLAB_TOKEN = 
+GH_TOKEN = "
 
+# Repositories to sync
+GITLAB_REPO = "gitlab.com/abhishekxrana/test.git"  # Corrected URL
+GITHUB_REPO = "github.com/abhishekrana1703/test.git"  # Corrected URL
 
-## Getting started
+# Working directory to clone the repository
+WORK_DIR = "/tmp/sync_repos"
+REPO_NAME = "test"
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+def run_command(command):
+    """Run a shell command and return the output."""
+        print(f"Running command: {' '.join(command)}")  # Print the command being run
+            try:
+                    result = subprocess.run(command, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+                            return result.stdout
+                                except subprocess.CalledProcessError as e:
+                                        print(f"Command failed: {e.cmd}")  # Print the command that failed
+                                                print(f"Error: {e.stderr}")  # Print the error message
+                                                        sys.exit(1)
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+                                                        def cleanup():
+                                                            """Clean up any previous directories."""
+                                                                print("Cleaning up previous directory...")
+                                                                    if os.path.exists(f"{WORK_DIR}/{REPO_NAME}"):
+                                                                            subprocess.run(["rm", "-rf", f"{WORK_DIR}/{REPO_NAME}"])
+
+                                                                            def sync_repos():
+                                                                                """Clone from GitLab and push to GitHub."""
+                                                                                    # Step 1: Clone from GitLab
+                                                                                        print("Cloning from GitLab...")
+                                                                                            run_command([
+                                                                                                    "git", "clone", f"https://oauth2:{GITLAB_TOKEN}@{GITLAB_REPO}",
+                                                                                                            f"{WORK_DIR}/{REPO_NAME}"
+                                                                                                                ])
+
+                                                                                                                    # Step 2: Navigate to the repository directory
+                                                                                                                        os.chdir(f"{WORK_DIR}/{REPO_NAME}")
+
+                                                                                                                            # Step 3: Add GitHub as a remote
+                                                                                                                                print("Adding GitHub as a remote...")
+                                                                                                                                    run_command([
+                                                                                                                                            "git", "remote", "add", "github", f"https://oauth2:{GH_TOKEN}@{GITHUB_REPO}"
+                                                                                                                                                ])
+
+                                                                                                                                                    # Step 4: Force push to GitHub
+                                                                                                                                                        print("Forcing push to GitHub...")
+                                                                                                                                                            run_command(["git", "push", "--force", "github", "main"])
+
+                                                                                                                                                                print("Synchronization complete!")
+
+                                                                                                                                                                # Create the working directory if it doesn't exist
+                                                                                                                                                                os.makedirs(WORK_DIR, exist_ok=True)
+
+                                                                                                                                                                # Clean up previous directory if exists
+                                                                                                                                                                cleanup()
+
+                                                                                                                                                                # Sync the repositories
+                                                                                                                                                                sync_repos()
 
 ## Add your files
 
